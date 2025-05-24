@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Events</title>
+  <link rel="stylesheet" href="/src/css/main-style.css">  
+  <link rel="stylesheet" href="/src/css/forum-style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo" onclick="window.location.href='/'">Tribuna</div>
+      <div class="main-nav">
+        <div class="nav-links">
+          <button onclick="window.location.href='/forum'">Forum</button>
+          <button class = "active" onclick="window.location.href='/events/'">Events</button>
+        </div>
+        <div class="auth-links">
+          <a href="/auth/login" class="auth-button login-button">
+            <span class="icon icon-login"></span>
+            <span>Login</span>
+          </a>
+          <a href="/auth/register" class="auth-button register-button">
+            <span class="icon icon-register"></span>
+            <span>Register</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <div class="search-container">
+        <span class="icon icon-search search-icon"></span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search">
+      </div>
+      
+      <div class="menu-section">
+        <p class="menu-title">MENU</p>
+        <div class="menu-item" onclick="window.location.href='/forum'">
+          <span class="menu-icon">≡</span>
+          <span>Questions</span>
+        </div>
+        <div class="menu-item" onclick="window.location.href='/events'">
+          <span class="menu-icon">≡</span>
+          <span>Events</span>
+        </div>
+      </div>
+      <div class="menu-section">
+        <p class="menu-title">PERSONAL NAVIGATOR</p>
+        <div class="menu-item active" id="user-events-link">
+          <span class="menu-icon">◯</span>
+          <span>Your events</span>
+        </div>
+      </div>
+      
+      <button class="ask-button" onclick="window.location.href='/events/create_event'">
+        <span>+</span>
+        <span>Create a new event</span>
+      </button>
+   </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="new">
+          <span class="icon icon-new"></span>
+          <span>New</span>
+        </button>
+        <button class="filter-tab" data-filter="top">
+          <span class="icon icon-arrow-up"></span>
+          <span>Top</span>
+        </button>
+        <button class="filter-tab" data-filter="closed">
+          <span>Closed</span>
+        </button>
+        <div class="category-filter-container">
+          <select id="category-filter" class="category-dropdown">
+            <option value="all">All Categories</option>
+            <!-- Categories will be loaded dynamically -->
+          </select>
+        </div>
+      </div>
+
+      <div class="posts-container" data-content-type="events">
+        {% if events %}
+          {% for event in events %}
+            <div class="post" data-id="{{ event.id }}">
+              <div class="post-header">
+                <div class="user-info">
+                  <div class="avatar">
+                    <img src="https://via.placeholder.com/40" alt="User avatar">
+                  </div>
+                  <div class="user-meta">
+                    <p class="username">{{ event.author_username }}</p>
+                    <p class="time">{{ event.date_created }}</p>
+                  </div>
+                </div>
+                <button>
+                  <span class="icon icon-more"></span>
+                </button>
+              </div>
+              <h3 class="post-title">{{ event.title }}</h3>
+              {% if event.image_path %}
+                <img src="/{{ event.image_path }}" alt="Event image" class="event-image">
+              {% endif %}
+                
+              {% if event.description %}
+                <p class="post-excerpt">{{ event.description }}</p>
+              {% endif %}
+              
+              <div class="event-details">
+                {% if event.date_scheduled %}
+                  <div class="event-date"><span class="icon icon-calendar"></span> {{ event.date_scheduled}}</div>
+                {% endif %}
+                {% if event.location %}
+                  <div class="event-location"><span class="icon icon-location"></span> {{ event.location }}</div>
+                {% endif %}
+              </div>
+              
+              <div class="post-footer">
+                <span class="post-tag">{{ event.category }}</span>
+                <div class="post-stats">
+                  <div class="stat">
+                    <span class="icon icon-eye"></span>
+                    <span>{{ event.views|default(0) }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="icon icon-message"></span>
+                    <span>{{ event.comments|default(0) }}</span>
+                  </div>
+                  <div class="stat">
+                    <span class="icon icon-arrow-up"></span>
+                    <span>{{ event.votes|default(0) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">No events available</div>
+        {% endif %}
+      </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <span class="icon icon-calendar"></span>
+          <h3>Upcoming Events</h3>
+        </div>
+        <ul class="sidebar-links">
+          <li class="sidebar-link">
+            <span class="sidebar-link-bullet">•</span>
+            <a href="#">Community Meetup - Next Saturday</a>
+          </li>
+          <li class="sidebar-link">
+            <span class="sidebar-link-bullet">•</span>
+            <a href="#">Volunteer Opportunity - May 15</a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <span class="icon icon-link"></span>
+          <h3>Featured links</h3>
+        </div>
+        <ul class="sidebar-links">
+          <li class="sidebar-link">
+            <span class="sidebar-link-bullet">•</span>
+            <a href="#">Events Guidelines</a>
+          </li>
+          <li class="sidebar-link">
+            <span class="sidebar-link-bullet">•</span>
+            <a href="#">Feedback & Suggestions</a>
+          </li>
+          <li class="sidebar-link">
+            <span class="sidebar-link-bullet">•</span>
+            <a href="#">Help & Support</a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Script -->
+  <script type="module" src="/src/js/header.js"></script>
+  <script type="module" src="/src/js/user-events-code.js"></script>
+</body>
+</html>

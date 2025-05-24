@@ -1,0 +1,126 @@
+{
+    "questions": [
+      {
+        "id": 1,
+        "username": "Golanginya",
+        "timeAgo": "5 min ago",
+        "title": "Do you think veterans should share their stories, or is it better to stay silent?",
+        "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consequat aliquet maecenas ut sit nulla",
+        "tag": "Society",
+        "views": 125,
+        "comments": 15,
+        "votes": 155
+      },
+      {
+        "id": 2,
+        "username": "Nazar",
+        "timeAgo": "25 min ago",
+        "title": "How do you cope with stress and memories of war?",
+        "excerpt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Bibendum vitae etiam lectus amet enim.",
+        "tag": "Health",
+        "views": 125,
+        "comments": 15,
+        "votes": 155
+      },
+      {
+        "id": 3,
+        "username": "AizhanMaratovna",
+        "timeAgo": "2 days ago",
+        "title": "What professions do you think veterans are best suited for after service?",
+        "excerpt": "Many veterans develop unique skills during their service that translate well to civilian careers.",
+        "tag": "Career",
+        "views": 78,
+        "comments": 23,
+        "votes": 112
+      },
+      {
+        "id": 4,
+        "username": "VeteranAdvocate",
+        "timeAgo": "3 days ago",
+        "title": "What resources have you found most helpful for veteran reintegration?",
+        "excerpt": "I'm looking for recommendations on programs, websites, or organizations that have been particularly useful.",
+        "tag": "Resources",
+        "views": 92,
+        "comments": 31,
+        "votes": 87
+      },
+      {
+        "id": 5,
+        "username": "MikeT",
+        "timeAgo": "4 days ago",
+        "title": "Has anyone used the new VA healthcare portal? Thoughts?",
+        "excerpt": "I'm trying to navigate the updated system and wondering if others have feedback on the user experience.",
+        "tag": "Healthcare",
+        "views": 143,
+        "comments": 42,
+        "votes": 67
+      }
+    ],
+    "events": [
+      {
+        "id": 1,
+        "username": "VeteranSupport",
+        "timeAgo": "1 day ago",
+        "title": "Veterans Support Group Meeting - Weekly Check-in",
+        "excerpt": "Join us for our weekly support group meeting. We'll be discussing reintegration strategies and sharing experiences.",
+        "tag": "Support",
+        "views": 89,
+        "comments": 7,
+        "votes": 43,
+        "date": "April 5, 2025",
+        "location": "Community Center, Room 201"
+      },
+      {
+        "id": 2,
+        "username": "MilitaryTransition",
+        "timeAgo": "2 days ago",
+        "title": "Career Workshop for Veterans - Resume Building",
+        "excerpt": "Learn how to translate your military experience into civilian terms that employers understand and value.",
+        "tag": "Workshop",
+        "views": 156,
+        "comments": 12,
+        "votes": 78,
+        "date": "April 10, 2025",
+        "location": "Veterans Affairs Office"
+      },
+      {
+        "id": 3,
+        "username": "VeteransNetwork",
+        "timeAgo": "3 days ago",
+        "title": "Annual Veterans Appreciation Picnic",
+        "excerpt": "Join us for food, games, and camaraderie at our annual appreciation event for veterans and their families.",
+        "tag": "Social",
+        "views": 203,
+        "comments": 18,
+        "votes": 127,
+        "date": "May 15, 2025",
+        "location": "Memorial Park"
+      },
+      {
+        "id": 4,
+        "username": "MentalHealthAlliance",
+        "timeAgo": "5 days ago",
+        "title": "Mental Health First Aid Training for Veterans",
+        "excerpt": "Learn how to identify, understand and respond to signs of mental health challenges and substance use disorders.",
+        "tag": "Training",
+        "views": 118,
+        "comments": 9,
+        "votes": 95,
+        "date": "April 22, 2025",
+        "location": "Veterans Memorial Hospital"
+      },
+      {
+        "id": 5,
+        "username": "VeteransBenefits",
+        "timeAgo": "1 week ago",
+        "title": "VA Benefits Information Session",
+        "excerpt": "Get the latest information about VA benefits, eligibility requirements, and application processes.",
+        "tag": "Information",
+        "views": 176,
+        "comments": 23,
+        "votes": 113,
+        "date": "April 18, 2025",
+        "location": "Online Webinar"
+      }
+    ]
+  }

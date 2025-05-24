@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Registration</title>
+  <link rel="stylesheet" href="/src/css/main-style.css">
+  <link rel="stylesheet" href="/src/css/registration-login-style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="auth-form">
+      <a class="logo" href='/'>Tribuna</a>
+      <p class="subtitle">створіть свій акаунт</p>
+      
+      <!-- <div id="social-buttons-placeholder"></div> -->
+
+      <form action="/auth/register" method="POST">
+        <div class="form-group">
+          <input type="text" class="form-input" id="first_name" placeholder="first name">
+        </div>
+
+        <div class="form-group">
+          <input type="text" class="form-input" id="last_name" placeholder="last name">
+        </div>
+        
+        <div class="form-group">
+          <input type="email" class="form-input" id="email" placeholder="email address">
+        </div>
+        
+        <div class="form-group">
+          <input type="password" class="form-input" id="password" placeholder="password">
+          <button type="button" class="toggle-password">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>  
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <input type="password" class="form-input" id="confirm_password" placeholder="confirm password">
+          <button type="button" class="toggle-password">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>  
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">sign up</button>
+      </form>
+
+      <div class="or-divider">
+        <span>OR</span>
+      </div>
+      
+      <div class="already-account">
+        <p>Вже маєте акаунт?</p>
+        <a href='/auth/login' class="login-link">sign in</a>
+      </div>
+    </div>
+  </div>
+  <script type = "module" src="/src/js/registration-code.js"></script>
+</body>
+</html>
