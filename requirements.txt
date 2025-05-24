@@ -14,3 +14,4 @@ jinja2
 python-multipart
 fastapi-utils
 apscheduler
+google-generative

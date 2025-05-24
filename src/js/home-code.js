@@ -57,7 +57,7 @@ async function loadUserData() {
 // Load goals from backend
 async function loadGoals() {
     try {
-        const response = await fetchWithAuth('/planner/get_goals');
+        const response = await fetchWithAuth('/planner/goals');
 
         if (!response.ok) {
             throw new Error(`Failed to fetch goals: ${response.status}`);
