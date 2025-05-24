@@ -6,7 +6,7 @@ from datetime import timedelta
 from pathlib import Path
 
 # Third-party imports
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.templating import Jinja2Templates
@@ -22,8 +22,6 @@ from server.core.security import (
     verify_password,
 )
 from server.apps.authentication.models import User
-from server.apps.events.models import Event
-from server.apps.events.schemas import EventResponse
 from .schemas import UserCreate, UserLogin, UserResponse, UserUpdate
 
 
@@ -94,30 +92,19 @@ def register_page():
 
 
 @router.post("/login", response_model=dict)
-def login_user(user: UserLogin, db: Session = Depends(get_db)):
-    """
-    Authenticate user and provide access token.
-    
-    Args:
-        user: Login credentials
-        db: Database session
-        
-    Returns:
-        JWT access token and token type
-        
-    Raises:
-        HTTPException: If credentials are invalid
-    """
-    db_user = db.query(User).filter(User.email == user.email).first()
-    if not db_user or not verify_password(user.password, db_user.hashed_password):
+def login_user(
+    username: str = Form(...),  # not 'email'
+    password: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    db_user = db.query(User).filter(User.email == username).first()
+    if not db_user or not verify_password(password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
-    # Generate JWT token
-    access_token_expires = timedelta(minutes=30)  # Token expiration time
+    access_token_expires = timedelta(minutes=30)
     access_token = create_access_token(
         data={"sub": db_user.email}, expires_delta=access_token_expires
     )
-
     return {"access_token": access_token, "token_type": "bearer"}
 
 
