@@ -45,17 +45,7 @@ class GoalRequest(BaseModel):
     model_config = {"from_attributes": True}
 
 class GoalResponse(BaseModel):
-    """Schema for the response of a goal.
-    {
-        "goal_name": "<goal>",
-        "goal_description": "<description>"
-        "tasks_to_goal": [
-            "task_1", 
-            "task_2" 
-        ]
-    }
-    
-    """
+    """Schema for the response of a goal."""
     id: UUID
     title: str
     description: str
@@ -68,14 +58,15 @@ class GoalResponse(BaseModel):
     @classmethod
     def from_goal(cls, goal: Goal):
         """Convert a Goal model to a GoalResponse schema."""
-        instance = cls()
-        instance.id = goal.id
-        instance.title = goal.title
-        instance.description = goal.description
-        instance.completed = goal.completed
-        instance.user_id = goal.user_id
-        instance.tasks = goal.tasks
-        return instance
+        # Create instance with all required fields at once
+        return cls(
+            id=goal.id,
+            title=goal.title,
+            description=goal.description,
+            completed=goal.completed,
+            user_id=goal.user_id,
+            tasks=goal.tasks
+        )
 
 class TaskResponse(BaseModel):
     """Schema for the response of a task."""
@@ -89,9 +80,9 @@ class TaskResponse(BaseModel):
     @classmethod
     def from_task(cls, task: Task):
         """Convert a Task model to a TaskResponse schema."""
-        instance = cls()
-        instance.id = task.id
-        instance.title = task.title
-        instance.completed = task.completed
-        instance.goal_id = task.goal_id
-        return instance
+        return cls(
+            id=task.id,
+            title=task.title,
+            completed=task.completed,
+            goal_id=task.goal_id
+        )
