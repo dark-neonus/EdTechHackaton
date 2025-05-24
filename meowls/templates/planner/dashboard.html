@@ -1,0 +1,70 @@
+<!-- filepath: /mnt/D/code/hackatons/EdTechHackaton/meowls/templates/planner/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - MeowlsComplete{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Your Learning Plans</h1>
+
+<div class="row mb-4">
+    <div class="col">
+        <a href="{% url 'planner:create_plan' %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus-circle me-1"></i> Create Plan
+        </a>
+        <a href="{% url 'planner:generate_plan' %}" class="btn btn-success">
+            <i class="fas fa-magic me-1"></i> Generate Plan with AI
+        </a>
+    </div>
+</div>
+
+{% if skill_plans %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for plan in skill_plans %}
+            <div class="col">
+                <div class="card h-100 shadow-sm skill-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ plan.title }}</h5>
+                        <p class="card-text">{{ plan.description|truncatechars:100 }}</p>
+                        
+                        {% with skills=plan.skills.all %}
+                            <div class="progress mb-3" style="height: 10px;">
+                                {% if skills %}
+                                    {% with completed=skills.filter(completed=True).count %}
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                            style="width: {{ completed|floatformat:0 }}%;" 
+                                            aria-valuenow="{{ completed|floatformat:0 }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    {% endwith %}
+                                {% else %}
+                                    <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                {% endif %}
+                            </div>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    {% if skills %}
+                                        {{ skills.filter(completed=True).count }} of {{ skills.count }} skills completed
+                                    {% else %}
+                                        No skills added yet
+                                    {% endif %}
+                                </small>
+                            </p>
+                        {% endwith %}
+                    </div>
+                    <div class="card-footer bg-transparent d-flex justify-content-between">
+                        <small class="text-muted">Created: {{ plan.created_at|date:"M d, Y" }}</small>
+                        <a href="{% url 'planner:plan_detail' plan_id=plan.id %}" class="btn btn-sm btn-outline-primary">
+                            View Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i> You don't have any learning plans yet. Create one to get started!
+    </div>
+{% endif %}
+{% endblock %}

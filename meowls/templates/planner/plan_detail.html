@@ -1,0 +1,167 @@
+<!-- filepath: /mnt/D/code/hackatons/EdTechHackaton/meowls/templates/planner/plan_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ plan.title }} - MeowlsComplete{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>{{ plan.title }}</h1>
+        <p class="text-muted">Created: {{ plan.created_at|date:"F d, Y" }}</p>
+    </div>
+    <div>
+        <a href="{% url 'planner:dashboard' %}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+        <a href="{% url 'planner:delete_plan' plan_id=plan.id %}" class="btn btn-danger">
+            <i class="fas fa-trash me-1"></i> Delete Plan
+        </a>
+    </div>
+</div>
+
+{% if plan.description %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Description</h5>
+        <p class="card-text">{{ plan.description }}</p>
+    </div>
+</div>
+{% endif %}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Skills Progress</h3>
+    </div>
+    <div class="card-body">
+        {% with skills=plan.skills.all %}
+            {% if skills %}
+                {% with completed=skills.filter(completed=True).count %}
+                    <div class="progress mb-3" style="height: 20px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                            style="width: {{ completed|floatformat:0 }}%;" 
+                            aria-valuenow="{{ completed|floatformat:0 }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ completed|floatformat:0 }}%
+                        </div>
+                    </div>
+                    <p>{{ completed }} of {{ skills.count }} skills completed</p>
+                {% endwith %}
+            {% else %}
+                <p>No skills added to this plan yet.</p>
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">Skills</h3>
+    </div>
+    <div class="card-body">
+        {% if skills %}
+            <div class="accordion" id="skillsAccordion">
+                {% for skill in skills %}
+                    <div class="accordion-item mb-3 {% if skill.completed %}border-success{% endif %}">
+                        <h2 class="accordion-header" id="heading{{ skill.id }}">
+                            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} {% if skill.completed %}bg-light-success{% endif %}" 
+                                   type="button" data-bs-toggle="collapse" 
+                                   data-bs-target="#collapse{{ skill.id }}" 
+                                   aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" 
+                                   aria-controls="collapse{{ skill.id }}">
+                                <div class="d-flex justify-content-between align-items-center w-100 me-2">
+                                    <div>
+                                        {% if skill.completed %}
+                                            <i class="fas fa-check-circle text-success me-2"></i>
+                                        {% endif %}
+                                        <span>{{ skill.name }}</span>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">{{ skill.estimated_hours }} hours</span>
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ skill.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" 
+                             aria-labelledby="heading{{ skill.id }}" data-bs-parent="#skillsAccordion">
+                            <div class="accordion-body">
+                                <div class="mb-3">{{ skill.description }}</div>
+                                
+                                {% if skill.resources.all %}
+                                    <h6 class="mb-2">Learning Resources:</h6>
+                                    <ul class="list-group mb-3">
+                                        {% for resource in skill.resources.all %}
+                                            <li class="list-group-item">
+                                                {% if resource.url %}
+                                                    <a href="{{ resource.url }}" target="_blank">{{ resource.name }}</a>
+                                                {% else %}
+                                                    {{ resource.name }}
+                                                {% endif %}
+                                                {% if resource.description %}
+                                                    <p class="mb-0 text-muted small">{{ resource.description }}</p>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-sm {% if skill.completed %}btn-secondary{% else %}btn-success{% endif %} toggle-skill" data-skill-id="{{ skill.id }}">
+                                        {% if skill.completed %}
+                                            <i class="fas fa-times-circle me-1"></i> Mark as Incomplete
+                                        {% else %}
+                                            <i class="fas fa-check-circle me-1"></i> Mark as Complete
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No skills have been added to this plan yet.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('.toggle-skill').click(function() {
+            var button = $(this);
+            var skillId = button.data('skill-id');
+            
+            $.ajax({
+                url: "{% url 'planner:update_skill_status' skill_id=0 %}".replace('0', skillId),
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    if (data.completed) {
+                        button.html('<i class="fas fa-times-circle me-1"></i> Mark as Incomplete');
+                        button.removeClass('btn-success').addClass('btn-secondary');
+                        button.closest('.accordion-item').addClass('border-success');
+                        button.closest('.accordion-item').find('.accordion-button').addClass('bg-light-success');
+                        button.closest('.accordion-item').find('h2').prepend('<i class="fas fa-check-circle text-success me-2"></i>');
+                    } else {
+                        button.html('<i class="fas fa-check-circle me-1"></i> Mark as Complete');
+                        button.removeClass('btn-secondary').addClass('btn-success');
+                        button.closest('.accordion-item').removeClass('border-success');
+                        button.closest('.accordion-item').find('.accordion-button').removeClass('bg-light-success');
+                        button.closest('.accordion-item').find('.fa-check-circle').remove();
+                    }
+                    
+                    // Reload the page to update the progress bar
+                    location.reload();
+                },
+                error: function() {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
