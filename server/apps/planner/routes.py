@@ -1,15 +1,9 @@
-"""
-Event Management Module
-This module provides a complete event management system for a community platform.
-It handles event creation, viewing, registration, voting, commenting, and scheduled status updates.
-"""
-
 import os
 import shutil
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from fastapi import (APIRouter, BackgroundTasks, Depends, FastAPI, File, Form,
@@ -157,12 +151,13 @@ def get_goal(
 
     return GoalResponse.from_goal(goal)
 
-# def get_goals(
-#     db: Session = Depends(get_db),
-#     current_user: User = Depends(get_current_user)
-# ):
-#     """
-#     Retrieve all goals for the current user.
-#     """
-#     goals = db.query(Goal).filter(Goal.user_id == current_user.id).all()
-#     return [GoalResponse.from_goal(goal) for goal in goals]
+@router.get("/get_goals", response_model=List[GoalResponse])
+def get_goals(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Retrieve all goals for the current user.
+    """
+    goals = db.query(Goal).filter(Goal.user_id == current_user.id).all()
+    return [GoalResponse.from_goal(goal) for goal in goals]

@@ -78,3 +78,7 @@ def home_page():
         html_content = html_file_path.read_text(encoding="utf-8")
         return HTMLResponse(content=html_content)
     return HTMLResponse(content="<h1>Home page not found</h1>", status_code=404)
+
+@app.get("/api/health-check")
+def health_check():
+    return {"status": "ok", "message": "Server is running"}

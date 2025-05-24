@@ -150,77 +150,6 @@ def get_user_id(token: str = Depends(oauth2_scheme), db: Session = Depends(get_d
     # Return the user's ID
     return {"user_id": str(user.id)}
 
-
-@router.get("/profile/{user_id}", response_class=HTMLResponse)
-def view_profile_page(user_id: str, request: Request, db: Session = Depends(get_db)):
-    """
-    Serve the profile page for a user.
-    
-    Args:
-        user_id: ID of the user to view
-        request: Request object for templates
-        db: Database session
-        
-    Returns:
-        HTML response with user profile
-        
-    Raises:
-        HTTPException: If user is not found
-    """
-    # Convert the user_id to UUID
-    try:
-        user_id_uuid = uuid.UUID(user_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail='Invalid user ID format') from exc
-
-    # Query the database for the user
-    user = db.query(User).filter(User.id == user_id_uuid).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Convert the user to the UserResponse model
-    user_data = UserResponse(
-        id=str(user.id),
-        first_name=user.first_name,
-        last_name=user.last_name,
-        email=user.email,
-        bio=user.bio or ""  # Ensure bio is not None
-    )
-
-    # Get user's events
-    users_events = (
-        db.query(Event)
-        .filter(Event.author_id == user_id_uuid)
-        .order_by(desc(Event.date_created))
-        .all()
-    )
-
-    # Convert the events to the EventResponse model
-    events_data = [
-        EventResponse(
-            id=str(event.id),  # Convert UUID to string
-            title=event.title,
-            description=event.description,
-            date_created=event.date_created.isoformat(),
-            location=event.location,
-            date_scheduled=event.date_scheduled.isoformat() if event.date_scheduled else None,
-            category=event.category,
-            author_id=str(event.author_id),  # Convert UUID to string
-        ).dict()
-        for event in users_events
-    ]
-
-    # Render the template with user data
-    return templates.TemplateResponse(
-        "user-profile-page.html",
-        {
-            "request": request,
-            "user": user_data.dict(),
-            "events": events_data,
-        },
-    )
-
-
 @router.get("/get_user_data", response_model=UserResponse)
 def get_user_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     """
@@ -247,7 +176,6 @@ def get_user_data(token: str = Depends(oauth2_scheme), db: Session = Depends(get
         first_name=user.first_name,
         last_name=user.last_name,
         email=user.email,
-        bio=user.bio or "",  # Ensure bio is not None
     )
 
 @router.delete("/delete_account", response_model=dict)
@@ -286,3 +214,4 @@ def delete_account(token: str = Depends(oauth2_scheme), db: Session = Depends(ge
             status_code=500,
             detail=f"Failed to delete account: {str(e)}"
         ) from e
+
