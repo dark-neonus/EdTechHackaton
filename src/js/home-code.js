@@ -68,46 +68,67 @@ async function loadGoals() {
         
     } catch (error) {
         console.error('Failed to load goals:', error);
-        document.getElementById('goalsLoading').style.display = 'none';
-        document.getElementById('goalsEmpty').style.display = 'block';
-        document.getElementById('goalsEmpty').innerHTML = '<p>Failed to load goals. Please try refreshing the page.</p>';
+        const goalsLoading = document.getElementById('goalsLoading');
+        const goalsEmpty = document.getElementById('goalsEmpty');
+        
+        if (goalsLoading) goalsLoading.style.display = 'none';
+        if (goalsEmpty) {
+            goalsEmpty.style.display = 'block';
+            goalsEmpty.innerHTML = '<p>Failed to load goals. Please try refreshing the page.</p>';
+        }
     }
 }
 
 // Show authentication prompt
 function showAuthPrompt() {
-    document.getElementById('authPrompt').style.display = 'block';
-    document.getElementById('dashboardContent').style.display = 'none';
-    document.getElementById('mainContent').appendChild(document.getElementById('authPrompt'));
+    const authPrompt = document.getElementById('authPrompt');
+    const dashboardContent = document.getElementById('dashboardContent');
+    const mainContent = document.getElementById('mainContent');
+    
+    if (authPrompt) authPrompt.style.display = 'block';
+    if (dashboardContent) dashboardContent.style.display = 'none';
+    if (mainContent && authPrompt) mainContent.appendChild(authPrompt);
     
     // Update auth section in header
     const authSection = document.getElementById('authSection');
-    authSection.innerHTML = `
-        <button class="btn btn-secondary" onclick="redirectToLogin()">Login</button>
-        <button class="btn btn-primary" onclick="redirectToRegister()">Register</button>
-    `;
+    if (authSection) {
+        authSection.innerHTML = `
+            <button class="btn btn-secondary" onclick="redirectToLogin()">Login</button>
+            <button class="btn btn-primary" onclick="redirectToRegister()">Register</button>
+        `;
+    }
 }
 
 // Show dashboard
 function showDashboard() {
-    document.getElementById('authPrompt').style.display = 'none';
-    document.getElementById('dashboardContent').style.display = 'block';
-    document.getElementById('mainContent').appendChild(document.getElementById('dashboardContent'));
+    const authPrompt = document.getElementById('authPrompt');
+    const dashboardContent = document.getElementById('dashboardContent');
+    const mainContent = document.getElementById('mainContent');
+    
+    if (authPrompt) authPrompt.style.display = 'none';
+    if (dashboardContent) dashboardContent.style.display = 'block';
+    if (mainContent && dashboardContent) mainContent.appendChild(dashboardContent);
     
     // Update auth section in header
     const authSection = document.getElementById('authSection');
-    const userName = currentUser ? currentUser.name || currentUser.email : 'User';
-    authSection.innerHTML = `
-        <span class="user-greeting">Hello, ${userName}</span>
-        <button class="btn btn-secondary" onclick="logout()">Logout</button>
-    `;
+    if (authSection && currentUser) {
+        const userName = currentUser.name || currentUser.email || 'User';
+        authSection.innerHTML = `
+            <span class="user-greeting">Hello, ${escapeHtml(userName)}</span>
+            <button class="btn btn-secondary" onclick="logout()">Logout</button>
+        `;
+    }
 }
 
 // Show loading state
 function showLoadingState() {
-    document.getElementById('goalsLoading').style.display = 'block';
-    document.getElementById('goalsEmpty').style.display = 'none';
-    document.getElementById('goalsGrid').innerHTML = '';
+    const goalsLoading = document.getElementById('goalsLoading');
+    const goalsEmpty = document.getElementById('goalsEmpty');
+    const goalsGrid = document.getElementById('goalsGrid');
+    
+    if (goalsLoading) goalsLoading.style.display = 'block';
+    if (goalsEmpty) goalsEmpty.style.display = 'none';
+    if (goalsGrid) goalsGrid.innerHTML = '';
 }
 
 // Render goals
@@ -116,39 +137,42 @@ function renderGoals() {
     const goalsLoading = document.getElementById('goalsLoading');
     const goalsEmpty = document.getElementById('goalsEmpty');
     
-    goalsLoading.style.display = 'none';
+    if (goalsLoading) goalsLoading.style.display = 'none';
     
     if (!userGoals || userGoals.length === 0) {
-        goalsEmpty.style.display = 'block';
-        goalsGrid.innerHTML = '';
+        if (goalsEmpty) goalsEmpty.style.display = 'block';
+        if (goalsGrid) goalsGrid.innerHTML = '';
         return;
     }
     
-    goalsEmpty.style.display = 'none';
+    if (goalsEmpty) goalsEmpty.style.display = 'none';
     
-    goalsGrid.innerHTML = userGoals.map(goal => `
-        <div class="goal-card" data-goal-id="${goal.id}">
-            <div class="goal-card-header">
-                <h3 class="goal-card-title">${escapeHtml(goal.title)}</h3>
-                <span class="goal-card-category">${escapeHtml(goal.category)}</span>
-            </div>
-            <p class="goal-card-description">${escapeHtml(goal.description || '')}</p>
-            <div class="goal-card-progress">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${goal.progress || 0}%"></div>
+    if (goalsGrid) {
+        goalsGrid.innerHTML = userGoals.map(goal => `
+            <div class="goal-card" data-goal-id="${goal.id}">
+                <div class="goal-card-header">
+                    <h3 class="goal-card-title">${escapeHtml(goal.title)}</h3>
+                    <span class="goal-card-category">${escapeHtml(goal.category || 'Uncategorized')}</span>
                 </div>
-                <span class="progress-text">${goal.progress || 0}%</span>
+                <p class="goal-card-description">${escapeHtml(goal.description || 'No description')}</p>
+                <div class="goal-card-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${goal.progress || 0}%"></div>
+                    </div>
+                    <span class="progress-text">${goal.progress || 0}%</span>
+                </div>
+                <div class="goal-card-meta">
+                    <span class="goal-card-due">Due: ${formatDate(goal.due_date)}</span>
+                    <span class="goal-card-status status-${(goal.status || 'active').toLowerCase()}">${goal.status || 'Active'}</span>
+                </div>
+                <div class="goal-card-actions">
+                    <button class="btn btn-small btn-primary" onclick="viewGoal('${goal.id}')">View</button>
+                    <button class="btn btn-small btn-secondary" onclick="editGoal('${goal.id}')">Edit</button>
+                    <button class="btn btn-small btn-danger" onclick="deleteGoal('${goal.id}')">Delete</button>
+                </div>
             </div>
-            <div class="goal-card-meta">
-                <span class="goal-card-due">Due: ${formatDate(goal.due_date)}</span>
-                <span class="goal-card-steps">${goal.completed_steps || 0}/${goal.total_steps} steps</span>
-            </div>
-            <div class="goal-card-actions">
-                <button class="btn btn-small btn-primary" onclick="viewGoal('${goal.id}')">View</button>
-                <button class="btn btn-small btn-danger" onclick="deleteGoal('${goal.id}')">Delete</button>
-            </div>
-        </div>
-    `).join('');
+        `).join('');
+    }
 }
 
 // Update dashboard stats
@@ -156,7 +180,7 @@ function updateDashboardStats() {
     if (!userGoals) return;
     
     const totalGoals = userGoals.length;
-    const activeGoals = userGoals.filter(goal => goal.status === 'active').length;
+    const activeGoals = userGoals.filter(goal => (goal.status || 'active') === 'active').length;
     const completedGoals = userGoals.filter(goal => goal.status === 'completed').length;
     
     // Calculate overall progress
@@ -175,11 +199,16 @@ function updateDashboardStats() {
         return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
     }).length;
     
-    // Update DOM
-    document.getElementById('totalGoals').textContent = totalGoals;
-    document.getElementById('goalsSummary').textContent = `${activeGoals} active, ${completedGoals} completed`;
-    document.getElementById('overallProgress').textContent = `${overallProgress}%`;
-    document.getElementById('monthlyGoals').textContent = monthlyCompleted;
+    // Update DOM elements if they exist
+    const totalGoalsEl = document.getElementById('totalGoals');
+    const goalsSummaryEl = document.getElementById('goalsSummary');
+    const overallProgressEl = document.getElementById('overallProgress');
+    const monthlyGoalsEl = document.getElementById('monthlyGoals');
+    
+    if (totalGoalsEl) totalGoalsEl.textContent = totalGoals;
+    if (goalsSummaryEl) goalsSummaryEl.textContent = `${activeGoals} active, ${completedGoals} completed`;
+    if (overallProgressEl) overallProgressEl.textContent = `${overallProgress}%`;
+    if (monthlyGoalsEl) monthlyGoalsEl.textContent = monthlyCompleted;
 }
 
 // Modal functions
@@ -188,21 +217,39 @@ window.openNewGoalModal = function() {
         createToast('Please log in to create goals', 'warning');
         return;
     }
-    document.getElementById('newGoalModal').style.display = 'flex';
+    const modal = document.getElementById('newGoalModal');
+    if (modal) modal.style.display = 'flex';
 };
 
 window.closeNewGoalModal = function() {
-    document.getElementById('newGoalModal').style.display = 'none';
-    document.getElementById('newGoalForm').reset();
+    const modal = document.getElementById('newGoalModal');
+    const form = document.getElementById('newGoalForm');
+    if (modal) modal.style.display = 'none';
+    if (form) form.reset();
 };
 
 // Goal management functions
 window.viewGoal = function(goalId) {
-    // Navigate to goal detail page
-    window.location.href = `/goal/${goalId}`;
+    if (!goalId) {
+        createToast('Invalid goal ID', 'error');
+        return;
+    }
+    
+    // Navigate to goal detail page with proper URL structure
+    window.location.href = `/planner/goal/${goalId}`;
+};
+
+window.editGoal = function(goalId) {
+    // TODO: Implement edit goal functionality
+    createToast('Edit goal functionality coming soon!', 'info');
 };
 
 window.deleteGoal = async function(goalId) {
+    if (!goalId) {
+        createToast('Invalid goal ID', 'error');
+        return;
+    }
+    
     if (!confirm('Are you sure you want to delete this goal? This action cannot be undone.')) {
         return;
     }
@@ -213,7 +260,8 @@ window.deleteGoal = async function(goalId) {
         });
         
         if (!response.ok) {
-            throw new Error(`Failed to delete goal: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `Failed to delete goal: ${response.status}`);
         }
         
         createToast('Goal deleted successfully', 'success');
@@ -222,7 +270,7 @@ window.deleteGoal = async function(goalId) {
         
     } catch (error) {
         console.error('Failed to delete goal:', error);
-        createToast('Failed to delete goal. Please try again.', 'error');
+        createToast(`Failed to delete goal: ${error.message}`, 'error');
     }
 };
 
@@ -240,50 +288,73 @@ window.logout = function() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     
+    // Reset state
+    currentUser = null;
+    userGoals = [];
+    
     // Show auth prompt
     showAuthPrompt();
     createToast('Logged out successfully', 'success');
 };
 
 // Form submission
-document.getElementById('newGoalForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        title: document.getElementById('goalTitle').value,
-        description: document.getElementById('goalDescription').value,
-        category: document.getElementById('goalCategory').value,
-        due_date: document.getElementById('goalDueDate').value,
-        total_steps: parseInt(document.getElementById('goalSteps').value),
-        user_id: currentUser.id
-    };
-    
-    try {
-        const response = await fetchWithAuth('/planner/create_goal', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        });
+const newGoalForm = document.getElementById('newGoalForm');
+if (newGoalForm) {
+    newGoalForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        if (!response.ok) {
-            throw new Error(`Failed to create goal: ${response.status}`);
+        if (!currentUser) {
+            createToast('Please log in to create goals', 'error');
+            return;
         }
         
-        createToast('Goal created successfully!', 'success');
-        closeNewGoalModal();
-        await loadGoals();
-        updateDashboardStats();
+        const formData = {
+            title: document.getElementById('goalTitle')?.value?.trim() || '',
+            description: document.getElementById('goalDescription')?.value?.trim() || '',
+            category: document.getElementById('goalCategory')?.value?.trim() || 'General',
+            due_date: document.getElementById('goalDueDate')?.value || null,
+            user_id: currentUser.id
+        };
         
-    } catch (error) {
-        console.error('Failed to create goal:', error);
-        createToast('Failed to create goal. Please try again.', 'error');
-    }
-});
+        // Validate required fields
+        if (!formData.title) {
+            createToast('Goal title is required', 'warning');
+            return;
+        }
+        
+        try {
+            const response = await fetchWithAuth('/planner/create_goal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.detail || `Failed to create goal: ${response.status}`);
+            }
+            
+            const newGoal = await response.json();
+            createToast('Goal created successfully!', 'success');
+            closeNewGoalModal();
+            
+            // Add to local array and re-render
+            userGoals.push(newGoal);
+            renderGoals();
+            updateDashboardStats();
+            
+        } catch (error) {
+            console.error('Failed to create goal:', error);
+            createToast(`Failed to create goal: ${error.message}`, 'error');
+        }
+    });
+}
 
 // Utility functions
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
@@ -291,7 +362,11 @@ function escapeHtml(text) {
 
 function formatDate(dateString) {
     if (!dateString) return 'No date set';
-    return new Date(dateString).toLocaleDateString();
+    try {
+        return new Date(dateString).toLocaleDateString();
+    } catch (error) {
+        return 'Invalid date';
+    }
 }
 
 // Close modal when clicking outside

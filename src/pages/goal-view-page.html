@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goal Details - Goal Tracker</title>
+    <link rel="stylesheet" href="/src/css/main-style.css">
+    <link rel="stylesheet" href="/src/css/goal-view-style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="/" class="back-button">
+                ← Back to Dashboard
+            </a>
+            
+            <div id="goalHeader" class="loading">
+                <div class="spinner"></div>
+                Loading goal details...
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Progress Overview -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        📊 Progress Overview
+                    </h2>
+                </div>
+                
+                <div id="progressSection" class="loading">
+                    <div class="spinner"></div>
+                    Loading progress...
+                </div>
+            </div>
+
+            <!-- Action Plan -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        🎯 Action Plan
+                    </h2>
+                    <button class="btn btn-primary" onclick="openAddTaskModal()">
+                        + Add Task
+                    </button>
+                </div>
+                
+                <div id="tasksSection" class="loading">
+                    <div class="spinner"></div>
+                    Loading tasks...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Task Modal -->
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Task</h3>
+                <button class="close-button" onclick="closeAddTaskModal()">&times;</button>
+            </div>
+            
+            <form id="addTaskForm">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" class="form-input" required>
+                </div>
+                
+                <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddTaskModal()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Add Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="/src/js/goal-view-code.js"></script>
+</body>
+</html>
