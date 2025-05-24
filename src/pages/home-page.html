@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathwise - Dashboard</title>
+    <link rel="stylesheet" href="/src/css/main-style.css">
+    <link rel="stylesheet" href="/src/css/home-style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">Pathwise</a>
+            <nav class="main-nav">
+                <div class="nav-links">
+                    <button class="active">Dashboard</button>
+                    <button>Profile</button>
+                </div>
+                <div class="auth-section" id="authSection">
+                    <!-- Auth buttons will be rendered here based on login status -->
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container" id="mainContent">
+        <!-- Content will be rendered here based on authentication status -->
+    </main>
+
+    <!-- Login/Register Section (shown when not authenticated) -->
+    <div class="auth-prompt" id="authPrompt" style="display: none;">
+        <div class="auth-prompt-content">
+            <h2>Welcome to Pathwise</h2>
+            <p>Please log in or register to access your dashboard and manage your goals.</p>
+            <div class="auth-buttons">
+                <button class="btn btn-primary" onclick="redirectToLogin()">Login</button>
+                <button class="btn btn-secondary" onclick="redirectToRegister()">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Template (shown when authenticated) -->
+    <div class="dashboard-content" id="dashboardContent" style="display: none;">
+        <!-- Dashboard Stats -->
+        <section class="dashboard-stats">
+            <div class="stat-card blue">
+                <div class="stat-card-header">
+                    <div class="stat-card-title">Total Goals</div>
+                    <div class="stat-card-icon">🎯</div>
+                </div>
+                <div class="stat-card-value" id="totalGoals">0</div>
+                <div class="stat-card-subtitle" id="goalsSummary">Loading...</div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-card-header">
+                    <div class="stat-card-title">Overall Progress</div>
+                    <div class="stat-card-icon">🏆</div>
+                </div>
+                <div class="stat-card-value" id="overallProgress">0%</div>
+                <div class="stat-card-subtitle">Average across all goals</div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="stat-card-header">
+                    <div class="stat-card-title">This Month</div>
+                    <div class="stat-card-icon">📅</div>
+                </div>
+                <div class="stat-card-value" id="monthlyGoals">0</div>
+                <div class="stat-card-subtitle">Goals completed</div>
+            </div>
+        </section>
+
+        <!-- Active Goals -->
+        <section class="active-goals">
+            <div class="section-header">
+                <h2 class="section-title">Active Goals</h2>
+                <button class="btn btn-primary" onclick="openNewGoalModal()">
+                    <span>+</span>
+                    New Goal
+                </button>
+            </div>
+            <div class="goals-grid" id="goalsGrid">
+                <!-- Goals will be rendered here -->
+            </div>
+            <div class="loading-state" id="goalsLoading" style="display: none;">
+                <p>Loading your goals...</p>
+            </div>
+            <div class="empty-state" id="goalsEmpty" style="display: none;">
+                <p>No goals yet. Create your first goal to get started!</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- New Goal Modal -->
+    <div class="modal" id="newGoalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Create New Goal</h3>
+                <button class="modal-close" onclick="closeNewGoalModal()">&times;</button>
+            </div>
+            <form id="newGoalForm">
+                <div class="form-group">
+                    <label class="form-label" for="goalTitle">Goal Title</label>
+                    <input type="text" id="goalTitle" class="form-input" placeholder="Enter your goal title" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="goalDescription">Description</label>
+                    <textarea id="goalDescription" class="form-input form-textarea" placeholder="Describe your goal in detail"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="goalCategory">Category</label>
+                    <select id="goalCategory" class="form-select" required>
+                        <option value="">Select a category</option>
+                        <option value="education">Education</option>
+                        <option value="fitness">Fitness</option>
+                        <option value="career">Career</option>
+                        <option value="personal">Personal</option>
+                        <option value="financial">Financial</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="goalDueDate">Due Date</label>
+                    <input type="date" id="goalDueDate" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="goalSteps">Total Steps</label>
+                    <input type="number" id="goalSteps" class="form-input" placeholder="Number of steps to complete" min="1" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeNewGoalModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="/src/js/home-code.js"></script>
+</body>
+</html>

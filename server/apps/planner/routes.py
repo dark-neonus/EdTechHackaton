@@ -1,15 +1,9 @@
-"""
-Event Management Module
-This module provides a complete event management system for a community platform.
-It handles event creation, viewing, registration, voting, commenting, and scheduled status updates.
-"""
-
 import os
 import shutil
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 import json
 

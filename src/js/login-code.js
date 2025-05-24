@@ -49,10 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitButton = form.querySelector('button[type="submit"]');
         const originalText = setSubmitButtonState(submitButton, true);
 
+        const formData = new FormData();
+        formData.append('username', email);
+        formData.append('password', password);
+
         const response = await fetch('/auth/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+          body: formData
         });
 
         submitButton.disabled = false;
