@@ -86,31 +86,51 @@ def create_task(
 
 @router.post("/delete_goal/{goal_id}", response_model=dict)
 def delete_goal(
-    goal_id: UUID,
+    goal_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     Delete a goal and all associated tasks.
     """
-    goal_to_delete = db.query(Goal).filter(Goal.id == goal_id, Goal.user_id == current_user.id).first()
+    try:
+        goal_uuid = UUID(goal_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid goal ID format.")
+
+    goal_to_delete = db.query(Goal).filter(Goal.id == goal_uuid, Goal.user_id == current_user.id).first()
     if not goal_to_delete:
         raise HTTPException(status_code=404, detail="Goal not found or you do not have permission to delete it.")
 
+    # First delete all associated tasks
+    db.query(Task).filter(Task.goal_id == goal_uuid).delete()
+    
+    # Then delete the goal
     db.delete(goal_to_delete)
+    
     db.commit()
-    return {"detail": "Goal deleted successfully."}
+    return {"detail": "Goal and associated tasks deleted successfully."}
 
 @router.post("/delete_task/{task_id}", response_model=dict)
 def delete_task(
-    task_id: UUID,
+    task_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     Delete a task associated with a goal.
     """
-    task_to_delete = db.query(Task).filter(Task.id == task_id, Task.goal.user_id == current_user.id).first()
+    try:
+        task_uuid = UUID(task_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid task ID format.")
+
+    # Find the task using a join to ensure it belongs to the current user's goal
+    task_to_delete = db.query(Task).join(Goal).filter(
+        Task.id == task_uuid,
+        Goal.user_id == current_user.id
+    ).first()
+    
     if not task_to_delete:
         raise HTTPException(status_code=404, detail="Task not found or you do not have permission to delete it.")
 
@@ -120,14 +140,18 @@ def delete_task(
 
 @router.get("/goal/{goal_id}", response_model=GoalResponse)
 def get_goal(
-    goal_id: UUID,
+    goal_id: str,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
     """
     Retrieve a specific goal by its ID.
     """
-    goal = db.query(Goal).filter(Goal.id == goal_id, Goal.user_id == current_user.id).first()
+    try:
+        goal_uuid = UUID(goal_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid goal ID format.")
+    goal = db.query(Goal).filter(Goal.id == goal_uuid, Goal.user_id == current_user.id).first()
     if not goal:
         raise HTTPException(status_code=404, detail="Goal not found or you do not have permission to access it.")
 
